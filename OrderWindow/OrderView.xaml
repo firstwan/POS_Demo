@@ -1,0 +1,177 @@
+﻿<UserControl x:Class="POS_Demo.OrderWindow.OrderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:POS_Demo.OrderWindow"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Name="thisView">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <!--Left Panel-->
+            <StackPanel Grid.Row="0" HorizontalAlignment="Stretch">
+                <ListView ItemsSource="{Binding OrderedProducts}" SizeChanged="ListView_SizeChanged" Style="{x:Null}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">                           
+                            
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                </Trigger>
+
+                                <Trigger Property="IsSelected"  Value="true">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush"  Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    
+                    <ListView.View>                        
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                    <Setter Property="Background" Value="AntiqueWhite"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="Black"/>
+                                    <Setter Property="Height" Value="50"/>
+                                    <Setter Property="IsEnabled" Value="False"/>
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="TextElement.Foreground" Value="Black"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>                                
+                            </GridView.ColumnHeaderContainerStyle>
+                            
+                            
+                            <GridViewColumn Header="QTY" DisplayMemberBinding="{Binding Path=Quantity}" />
+                            <GridViewColumn Header="ITEMS" DisplayMemberBinding="{Binding Path=ProductVariant.Products.ProductName}" />
+                            <GridViewColumn Header="PRICE" DisplayMemberBinding="{Binding Path=ProductPrice, StringFormat={}{0:0.00}}" />
+                            <GridViewColumn Header="">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <Button Content="+" Width="30" Command="{Binding Path=DataContext.IncreaseQtyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                            <Button Content="-" Width="30" Command="{Binding Path=DataContext.DecreaseQtyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>                
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="1" Margin="5">
+                <Grid Margin="10 20 10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" Text="Total:" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Column="2" x:Name="TotalPrice" Text="{Binding Path=TotalPrice, StringFormat={}{0:0.00}}" HorizontalAlignment="Right" />
+
+                </Grid>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Grid Height="40" Width="200">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="5 0" Content="Payment"/>
+                    <Button Grid.Column="1" Margin="5 0" Content="Back"/>
+                </Grid>
+            </StackPanel>
+
+
+        </Grid>
+
+        <!--Right panel-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+
+            <!--User Session-->
+            <StackPanel Grid.Row="0" Margin="10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="USER:" FontWeight="Bold"></TextBlock>
+                    <TextBlock Text="ADMIN" Foreground="DarkGray" Margin="5 0"></TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="DATE:" FontWeight="Bold"></TextBlock>
+                    <TextBlock Text="2020-11-06 13:58:55" Foreground="DarkGray" Margin="5 0"></TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="TABLE:" FontWeight="Bold"></TextBlock>
+                    <TextBlock Text="2" Foreground="DarkGray" Margin="5 0"></TextBlock>
+                </StackPanel>
+
+            </StackPanel>
+
+            <!--Food Session-->
+            <TabControl x:Name="categoriesTab" Grid.Row="1" SelectedIndex="0" ItemsSource="{Binding Path=CategoriesList}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=CategoryName}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding Path=Products}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Path=ProductName}"  Command="{Binding Path=DataContext.AddProductCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Height="50" Width="100" Margin="8"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+                <!--<TabItem Header="Food">
+                    <Grid Background="#FFE5E5E5">
+                        <WrapPanel x:Name="foodTabBox">
+                            <Button Content="add button" Margin="5" Height="50" Width="100"/>
+                        </WrapPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Beverages">
+                    <Grid Background="#FFE5E5E5">
+                        <WrapPanel>
+                            <Button Content="Button1" Margin="5" Height="50" Width="100"/>
+                        </WrapPanel>
+                    </Grid>
+                </TabItem>-->
+            </TabControl>
+        </Grid>
+    </Grid>
+</UserControl>

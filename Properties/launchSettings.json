@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "POS_Demo": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
